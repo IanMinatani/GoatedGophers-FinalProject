@@ -1,3 +1,5 @@
+#include <cmath>
+
 namespace aa448 {
 	class quad_controller {
 		private:
@@ -23,7 +25,7 @@ namespace aa448 {
 				// Initialize your data members.
 
 				// Example (delete this in your implementation, and replace it with your own).
-				memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
+				//memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
 				                                             // which has sizeof(float)*5*3 bytes of data, to zero. Without doing
 				                                             // this, you are not guaranteed that ex_num_array_1_ will
 				                                             // have zero values.
@@ -202,14 +204,14 @@ namespace aa448 {
 		                    if(f[i] <= 0.0381){
 		                        f[i] = 0.0380;
 		                    } else if(f[i] >=1.6896){
-		                        f[i] = 1.689
+		                        f[i] = 1.689;
 		                    }
 		
 		                    //if force is really low just round to 0
 		                    if(f[i] == 0){
 		                        pwms[i] = 1100;
 		                    } else{
-		                        pwms[i] = 1120 + (-1*b+sqrt(b*b - 4*a*(c-f_mot_cmd[i]))/(2*a))
+		                        pwms[i] = 1120 + (-1*b+std::sqrt(b*b - 4*a*(c-f_mot_cmd[i]))/(2*a));
 		                    }
 		
 		                }
