@@ -177,11 +177,15 @@ namespace aa448 {
 				// control allocator that prioritizes m_x and m_y as the top priority,
 				// f_z as the second priority, and m_z as the lowest priority.
 
-				// THIS IS A PLACEHOLDER TO PREVENT THE COMPILER FROM COMPLAINING.
-				// DELETE THIS CODE IN YOUR IMPELEMENTATION AND REPLACE IT WITH
-				// YOURS.
-				(void)w_req;
-				(void)f_mot_cmd;
+				float matrixHinverse[4][4] = { {-0.25, -2.9412, 2.9412, 16.6667}, {-0.25, -2.9412, -2.9412, -16.6667}, 
+    					{-0.25, 2.9412, -2.9412, 16.6667}, {-0.25, 2.9412, 2.9412, -16.6667}};
+				
+				for (int i = 0; i < 4; i++) {
+				        for (int j = 0; j < 4; j++) {
+				            f_mot_cmd[i] += matrixHinverse[i][j] * w_req[j];
+				        }
+				    }
+				
 			}
 			void signal_converter(const float f_mot_cmd[4], float pwms[4]) {
 				// Interface:
