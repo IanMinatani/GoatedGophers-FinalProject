@@ -185,26 +185,38 @@ namespace aa448 {
 			}
 			void signal_converter(const float f_mot_cmd[4], float pwms[4]) {
 				// Interface:
-				// 1. f_mot_cmd - Input  - 4x1 vector of commanded motor forces: f_mot_cmd_1 [N], f_mot_cmd_2 [N], f_mot_cmd_3 [N], f_mot_cmd_4 [N].
-				// 2. pwms      - Output - 4x1 vector of PWM signals: pwm_1 [us], pwm_2 [us], pwm_3 [us], pwm_4 [us]
-				//
-				// This function should apply a static mapping from commanded motor
-				// force [N] to PWM [us]. Each PWM channel corresponds to the
-				// appropriately numbered motor, and should be bounded to remain
-				// within 1120 [us] and 1800 [us], and the mapping should be
-				// defined such that a PWM of 1100 [us] would correspond to zero
-				// thrust on any given motor. See the project document for more
-				// details.
-
-				// THIS IS A PLACEHOLDER TO PREVENT THE COMPILER FROM COMPLAINING.
-				// DELETE THIS CODE IN YOUR IMPELEMENTATION AND REPLACE IT WITH
-				// YOURS.
-				(void)f_mot_cmd;
-				(void)pwms;
-				pwms[0] = 1250;
-				pwms[1] = 1250;
-				pwms[2] = 1300;
-				pwms[3] = 1300;
+		                // 1. f_mot_cmd - Input  - 4x1 vector of commanded motor forces: f_mot_cmd_1 [N], f_mot_cmd_2 [N], f_mot_cmd_3 [N], f_mot_cmd_4 [N].
+		                // 2. pwms      - Output - 4x1 vector of PWM signals: pwm_1 [us], pwm_2 [us], pwm_3 [us], pwm_4 [us]
+		                float f[] = {f_mot_cmd[0],f_mot_cmd[1],f_mot_cmd[2],f_mot_cmd[3]};
+		                float a = 1.57*(10^(-6));
+		                float b = 0.001126;
+		                float c = 0.09285;
+		                for (int i = 0; i < 4; i++){
+		            
+		                    //Limiting forces    
+		
+		                    if(f[i] <= 0.0381){
+		                        f[i] = 0.0380;
+		                    } else if(f[i] >=1.6896){
+		                        f[i] = 1.689
+		                    }
+		
+		                    //if force is really low just round to 0
+		                    if(f[i] == 0){
+		                        pwms[i] = 1100;
+		                    } else{
+		                        pwms[i] = 1120 + (-1*b+sqrt(b*b - 4*a*(c-f_mot_cmd[i]))/(2*a))
+		                    }
+		
+		                }
+		
+		                // This function should apply a static mapping from commanded motor
+		                // force [N] to PWM [us]. Each PWM channel corresponds to the
+		                // appropriately numbered motor, and should be bounded to remain
+		                // within 1120 [us] and 1800 [us], and the mapping should be
+		                // defined such that a PWM of 1100 [us] would correspond to zero
+		                // thrust on any given motor. See the project document for more
+		                // details.
 			}
 	};
 }
