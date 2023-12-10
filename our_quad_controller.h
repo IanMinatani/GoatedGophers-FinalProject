@@ -25,7 +25,7 @@ namespace aa448 {
 				// Initialize your data members.
 
 				// Example (delete this in your implementation, and replace it with your own).
-				//memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
+				memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
 				                                             // which has sizeof(float)*5*3 bytes of data, to zero. Without doing
 				                                             // this, you are not guaranteed that ex_num_array_1_ will
 				                                             // have zero values.
@@ -92,7 +92,9 @@ namespace aa448 {
 				// THIS IS A PLACEHOLDER TO PREVENT THE COMPILER FROM COMPLAINING.
 				// DELETE THIS CODE IN YOUR IMPELEMENTATION AND REPLACE IT WITH
 				// YOURS.
-				
+				(void)r_omega_xyz;
+				(void)omega_xyz_est;
+				const float r_torques_xyz[3] = {0,};
 
 				// Call step_wrench().
 				step_wrench(r_f_z,r_torques_xyz,pwms);
@@ -177,10 +179,13 @@ namespace aa448 {
 				// control allocator that prioritizes m_x and m_y as the top priority,
 				// f_z as the second priority, and m_z as the lowest priority.
 
-				float matrixHinverse[4][4] = { {-0.25, -2.9412, 2.9412, 16.6667}, {-0.25, -2.9412, -2.9412, -16.6667}, 
-    					{-0.25, 2.9412, -2.9412, 16.6667}, {-0.25, 2.9412, 2.9412, -16.6667}};
+				float matrixHinverse[4][4] = { {-0.25, -2.9412, 2.9412, 16.6667},
+				                               {-0.25, -2.9412, -2.9412, -16.6667}, 
+    				               	           {-0.25, 2.9412, -2.9412, 16.6667},
+											   {-0.25, 2.9412, 2.9412, -16.6667}};
 				
 				for (int i = 0; i < 4; i++) {
+					f_mot_cmd[i] = 0;
 				        for (int j = 0; j < 4; j++) {
 				            f_mot_cmd[i] += matrixHinverse[i][j] * w_req[j];
 				        }
@@ -192,25 +197,23 @@ namespace aa448 {
 		                // 1. f_mot_cmd - Input  - 4x1 vector of commanded motor forces: f_mot_cmd_1 [N], f_mot_cmd_2 [N], f_mot_cmd_3 [N], f_mot_cmd_4 [N].
 		                // 2. pwms      - Output - 4x1 vector of PWM signals: pwm_1 [us], pwm_2 [us], pwm_3 [us], pwm_4 [us]
 		                float f[] = {f_mot_cmd[0],f_mot_cmd[1],f_mot_cmd[2],f_mot_cmd[3]};
-		                float a = 1.57*(10^(-6));
+		                float a = 1.5685e-6;
 		                float b = 0.001126;
-		                float c = 0.09285;
+		                float c = 0.09276;
+						const float f_min = 0.0381;
+						const float f_max = 1.6896;
 		                for (int i = 0; i < 4; i++){
 		            
 		                    //Limiting forces    
-		
-		                    if(f[i] <= 0.0381){
-		                        f[i] = 0.0380;
-		                    } else if(f[i] >=1.6896){
-		                        f[i] = 1.689;
-		                    }
-		
 		                    //if force is really low just round to 0
-		                    if(f[i] == 0){
-		                        pwms[i] = 1100;
-		                    } else{
-		                        pwms[i] = 1120 + (-1*b+std::sqrt(b*b - 4*a*(c-f_mot_cmd[i]))/(2*a));
+
+		                    if(f[i] < f_min){
+		                        f[i] = f_min;
+		                    } else if(f[i] > f_max){
+		                        f[i] = f_max;
 		                    }
+							//find exact pwm hardware signal
+							pwms[i] = 1100 + ((-b+std::sqrt(b*b - 4*a*(c-f[i])))/(2*a));
 		
 		                }
 		
