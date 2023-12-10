@@ -25,7 +25,7 @@ class pid {
 			// No-op.
 		}
 		float step(const float u_k, const float T) {
-			const float N = 2*M_PI*f_co_d_Hz_;
+			const float N = 2*3.14159*f_co_d_Hz_;
 
 			const float b0 = kp_*(1+N*T)+ki_*T*(1+N*T)+kd_*N;
 			const float b1 = -(kp_*(2+N*T)+ki_*T+2*kd_*N);
