@@ -1,17 +1,19 @@
 #include <cmath>
+#include "pid.h"
 
 namespace aa448 {
 	class quad_controller {
 		private:
 			float ex_num_array_1_[5][3]; // example data member that is a 5x3 array of floats (you can delete this line in your implementation).
 			float ex_den_array_1_[5][3]; // example data member that is a 5x3 array of floats (you can delete this line in your implementation).
+			pid C_omega_x;
 			// you should declare more internal data members here...
 			// ...
 			// ...
 			// ...
 			
 		public:
-			quad_controller() {
+			quad_controller(): C_omega_x(0.0097,0.0080,0.00050968,10) {
 				// Constructor function that is called when quad_controller object
 				// is instantiated.
 				initialize(); // you should not need to change this.
@@ -25,7 +27,7 @@ namespace aa448 {
 				// Initialize your data members.
 
 				// Example (delete this in your implementation, and replace it with your own).
-				memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
+				//memset(ex_num_array_1_,0,sizeof(float)*5*3); // memset sets the data pointed to by ex_num_array_1_,
 				                                             // which has sizeof(float)*5*3 bytes of data, to zero. Without doing
 				                                             // this, you are not guaranteed that ex_num_array_1_ will
 				                                             // have zero values.
@@ -92,9 +94,10 @@ namespace aa448 {
 				// THIS IS A PLACEHOLDER TO PREVENT THE COMPILER FROM COMPLAINING.
 				// DELETE THIS CODE IN YOUR IMPELEMENTATION AND REPLACE IT WITH
 				// YOURS.
-				(void)r_omega_xyz;
-				(void)omega_xyz_est;
-				const float r_torques_xyz[3] = {0,};
+
+				const float r_torque_x_error = r_omega_xyz[0] - omega_xyz_est[0];
+				const float r_torque_x = C_omega_x.step(r_torque_x_error,(1.0/400.0));
+				const float r_torques_xyz[3] = {r_torque_x,0,0};
 
 				// Call step_wrench().
 				step_wrench(r_f_z,r_torques_xyz,pwms);
