@@ -24,7 +24,7 @@ class pid {
 		~pid() {
 			// No-op.
 		}
-		float step(const float u_k, const float T, const float u_min, const float u_max) {
+		float step(const float u_k, const float T) {
 			const float N = 2*M_PI*f_co_d_Hz_;
 
 			const float b0 = kp_*(1+N*T)+ki_*T*(1+N*T)+kd_*N;
@@ -43,6 +43,6 @@ class pid {
 			y_[1] = y_[0];
 			y_[0] = y_k;
 
-			return std::min(std::max(y_k,u_min),u_max);
+			return y_k;
 		}
 };
