@@ -92,9 +92,7 @@ namespace aa448 {
 				// THIS IS A PLACEHOLDER TO PREVENT THE COMPILER FROM COMPLAINING.
 				// DELETE THIS CODE IN YOUR IMPELEMENTATION AND REPLACE IT WITH
 				// YOURS.
-				(void)r_omega_xyz;
-				(void)omega_xyz_est;
-				const float r_torques_xyz[3] = {0,};
+				
 
 				// Call step_wrench().
 				step_wrench(r_f_z,r_torques_xyz,pwms);
